@@ -4,7 +4,10 @@ import speech_recognition as sr
 import google.generativeai as genai
 import pyttsx3
 import time
+import random
+import pandas as pd
 from pydub import AudioSegment
+from datetime import datetime
 import io
 import numpy as np
 import json
@@ -28,6 +31,12 @@ class ConversationBot:
 
         self.engine = pyttsx3.init()
 
+        # Initialize character and roles
+        self.character_type = self.select_character()
+        self.speaker_listener_role = random.choice(["speaker", "listener"])
+        self.setup_character()
+
+
         voices = self.engine.getProperty('voices')
         for voice in voices:
             if "female" in voice.name.lower():  # Or specify a language/accent preference here
@@ -36,6 +45,87 @@ class ConversationBot:
 
         # Set speech rate
         self.engine.setProperty('rate', 180)
+
+    def setup_character(self):
+        self.personalities = {
+            'optimistic': {
+                'rate': 180,
+                'volume': 0.9,
+                'speaker_phrases': [
+                    "I'd love to share something positive!",
+                    "Let me tell you about an interesting perspective.",
+                    "Here's something encouraging to consider."
+                ],
+                'listener_phrases': [
+                    "I'm here to listen with an open heart.",
+                    "Please share your thoughts, I see the bright side in everything!",
+                    "I'd love to hear your perspective!"
+                ],
+                'affirmations': [
+                    "That's a wonderful point!",
+                    "I can see how much thought you've put into this!",
+                    "You're handling this so well!"
+                ]
+            },
+            'neutral': {
+                'rate': 160,
+                'volume': 0.8,
+                'speaker_phrases': [
+                    "Let's discuss this objectively.",
+                    "Here's a balanced perspective.",
+                    "Consider this viewpoint."
+                ],
+                'listener_phrases': [
+                    "I'm listening objectively.",
+                    "Please share your thoughts.",
+                    "I'm here to understand your perspective."
+                ],
+                'affirmations': [
+                    "I understand your point.",
+                    "That's a valid perspective.",
+                    "Thank you for sharing that."
+                ]
+            },
+            'pessimistic': {
+                'rate': 150,
+                'volume': 0.7,
+                'speaker_phrases': [
+                    "Let me share my concerns.",
+                    "Here's what worries me.",
+                    "I should point out potential issues."
+                ],
+                'listener_phrases': [
+                    "I'm listening, though it might be challenging.",
+                    "Share your thoughts, I understand things can be difficult.",
+                    "I'm here to hear your concerns."
+                ],
+                'affirmations': [
+                    "Life can be challenging, but I hear you.",
+                    "It's normal to feel this way.",
+                    "These situations are never easy."
+                ]
+            }
+        }
+        
+        personality = self.personalities[self.character_type]
+        self.engine.setProperty('rate', personality['rate'])
+        self.engine.setProperty('volume', personality['volume'])
+        
+    def select_character(self):
+        print("\nSelect chatbot character:")
+        print("1. Optimistic")
+        print("2. Neutral")
+        print("3. Pessimistic")
+        while True:
+            try:
+                choice = input("Enter choice (1-3): ")
+                return {
+                    '1': 'optimistic',
+                    '2': 'neutral',
+                    '3': 'pessimistic'
+                }[choice]
+            except KeyError:
+                print("Invalid choice. Please enter 1, 2, or 3.")
 
     def update_character(self):
         character_prompt = (
@@ -81,6 +171,15 @@ class ConversationBot:
         except sr.RequestError:
             print("Sorry, there was an error with the speech recognition service.")
             return None
+        
+    def paraphrase(self, text):
+        try:
+            prompt = f"Paraphrase this statement briefly: '{text}'"
+            response = self.model.generate_content(prompt)
+            return response.text
+        except Exception:
+            return f"Let me make sure I understood: {text}"
+
 
     def generate_response(self, user_input):
         prompt = (
@@ -140,6 +239,11 @@ class ConversationBot:
         # Clear the stop_speaking_event after each speak
         self.stop_speaking_event.clear()
 
+    def switch_role(self):
+        self.speaker_listener_role = "listener" if self.speaker_listener_role == "speaker" else "speaker"
+        phrases = self.personalities[self.character_type]['speaker_phrases' if self.speaker_listener_role == "speaker" else 'listener_phrases']
+        return random.choice(phrases)
+
     def is_detailed_response_needed(self, user_input):
         # choose conditions under which a longer could might be necessary
         keywords = ["explain", "details", "more information", "why", "how"]
@@ -160,8 +264,10 @@ class ConversationBot:
         return response.text.strip().lower()
 
     def main_loop(self):
-        print(f"Welcome to the Advanced Interactive Conversation Bot!")
+        self.speak_text("Welcome to the Advanced Interactive Conversation Bot!")
         print("Speak to start the conversation. Say 'goodbye' to end.")
+
+        self.speak_text(self.switch_role())
 
         while True:
             user_input = self.listen_for_speech()
@@ -170,12 +276,20 @@ class ConversationBot:
                 continue
             
             if user_input.lower() == 'goodbye':
-                self.speak_text("It was nice talking to you. Here's a summary of our conversation:")
+                self.speak_text("It was nice talking to you.")
                 summary = self.summarize_conversation()
                 self.speak_text(summary)
                 self.speak_text("Goodbye!")
+                self.save_conversation()
                 break
             
+
+                        # Paraphrase and confirm understanding
+            if self.speaker_listener_role == "listener":
+                paraphrase = self.paraphrase(user_input)
+                self.speak_text(paraphrase)
+                self.speak_text("Did I understand correctly?")
+
             self.conversation_history.append({"user": user_input})
 
             response = self.generate_response(user_input)
@@ -198,7 +312,28 @@ class ConversationBot:
                 self.speak_text(f"Here's a summary of our conversation: {summary}")
 
             # Reset misunderstanding count after successful exchange
-            self.misunderstanding_count = 0  
+            self.misunderstanding_count = 0 
+
+            # Random affirmation
+            if random.choice([True, False]):
+                self.speak_text(random.choice(self.personalities[self.character_type]['affirmations']))
+            
+            # Switch roles and use appropriate phrase
+            self.speak_text(self.switch_role())
+            
+            # Save to conversation history
+            self.conversation_history.append({
+                "timestamp": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+                "speaker": "user",
+                "message": user_input,
+                "response": response
+            }) 
+
+    def save_conversation(self):
+        df = pd.DataFrame(self.conversation_history)
+        filename = f"conversation_{datetime.now().strftime('%Y%m%d_%H%M%S')}.xlsx"
+        df.to_excel(filename, index=False)
+        print(f"\nConversation saved to {filename}")
 
 if __name__ == "__main__":
     bot = ConversationBot()
