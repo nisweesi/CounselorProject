@@ -11,7 +11,7 @@ from datetime import datetime
 import pandas as pd
 
 # Configure Gemini API
-# genai.configure(api_key='AIzaSyB6xGpFdylTilpEJJOugCSrZvU26PfiMko')
+# genai.configure(api_key='XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX')
 # model = genai.GenerativeModel('gemini-pro')
 
 class ConversationBot:
@@ -23,7 +23,7 @@ class ConversationBot:
         self.conversation_history = []
         
         # Configure Gemini API
-        genai.configure(api_key='AIzaSyB6xGpFdylTilpEJJOugCSrZvU26PfiMko')
+        genai.configure(api_key='xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx')
         self.model = genai.GenerativeModel('gemini-pro')
         
         # Initialize speech recognition and TTS
