@@ -13,13 +13,14 @@ import numpy as np
 import json
 
 # Configure Gemini API
-genai.configure(api_key=os.getenv("GEMINI_API_KEY"))
+genai.configure(api_key='AIzaSyB6xGpFdylTilpEJJOugCSrZvU26PfiMko')
 model = genai.GenerativeModel('gemini-pro')
 
 recognizer = sr.Recognizer()
 
 class ConversationBot:
     def __init__(self, detector):
+        self.model = genai.GenerativeModel('gemini-pro')
         self.detector = detector
         self.context = {}
         self.current_task = None
@@ -52,61 +53,62 @@ class ConversationBot:
                 'rate': 180,
                 'volume': 0.9,
                 'speaker_phrases': [
-                    "I'd love to share something positive!",
-                    "Let me tell you about an interesting perspective.",
-                    "Here's something encouraging to consider."
+                    "Let me share something uplifting with you!",
+                    "I believe there's always a silver lining.",
+                    "Here's a positive way to look at this situation."
                 ],
                 'listener_phrases': [
-                    "I'm here to listen with an open heart.",
-                    "Please share your thoughts, I see the bright side in everything!",
-                    "I'd love to hear your perspective!"
+                    "I'm here to listen and find the bright side together.",
+                    "Please share your thoughts. I’m sure we can find something good in this.",
+                    "I’d love to hear your perspective and help you see the positives!"
                 ],
                 'affirmations': [
-                    "That's a wonderful point!",
-                    "I can see how much thought you've put into this!",
-                    "You're handling this so well!"
+                    "You're doing an amazing job handling this!",
+                    "That’s such a thoughtful way to approach things!",
+                    "I can see how much effort you’re putting into this. Keep it up!"
                 ]
             },
             'neutral': {
                 'rate': 160,
                 'volume': 0.8,
                 'speaker_phrases': [
-                    "Let's discuss this objectively.",
-                    "Here's a balanced perspective.",
-                    "Consider this viewpoint."
+                    "Let’s look at this from a balanced perspective.",
+                    "Here’s a neutral way of approaching this topic.",
+                    "Let’s discuss this objectively and see where it leads us."
                 ],
                 'listener_phrases': [
-                    "I'm listening objectively.",
-                    "Please share your thoughts.",
-                    "I'm here to understand your perspective."
+                    "I’m here to understand your point of view without judgment.",
+                    "Please share your thoughts. I’d like to understand better.",
+                    "I’m listening carefully to what you’re saying."
                 ],
                 'affirmations': [
-                    "I understand your point.",
-                    "That's a valid perspective.",
-                    "Thank you for sharing that."
+                    "That’s a fair point. Thank you for sharing.",
+                    "I can see where you’re coming from.",
+                    "You’ve explained that really well."
                 ]
             },
             'pessimistic': {
                 'rate': 150,
                 'volume': 0.7,
                 'speaker_phrases': [
-                    "Let me share my concerns.",
-                    "Here's what worries me.",
-                    "I should point out potential issues."
+                    "Let me share what concerns me about this situation.",
+                    "Here’s something that might be worth worrying about.",
+                    "I feel there are some challenges we need to address."
                 ],
                 'listener_phrases': [
-                    "I'm listening, though it might be challenging.",
-                    "Share your thoughts, I understand things can be difficult.",
-                    "I'm here to hear your concerns."
+                    "I’m listening, even if things feel tough right now.",
+                    "Please share your concerns. I know it’s not easy to talk about these things.",
+                    "I’m here to hear what’s on your mind, even if it’s difficult."
                 ],
                 'affirmations': [
-                    "Life can be challenging, but I hear you.",
-                    "It's normal to feel this way.",
-                    "These situations are never easy."
+                    "It’s okay to feel uncertain—these situations are tough.",
+                    "You’re handling this better than most would in such circumstances.",
+                    "It’s normal to feel overwhelmed sometimes. You’re doing your best."
                 ]
             }
         }
-        
+
+        # Set speech rate and volume based on personality
         personality = self.personalities[self.character_type]
         self.engine.setProperty('rate', personality['rate'])
         self.engine.setProperty('volume', personality['volume'])
@@ -174,11 +176,17 @@ class ConversationBot:
         
     def paraphrase(self, text):
         try:
-            prompt = f"Paraphrase this statement briefly: '{text}'"
+            prompt = (
+                f"As a listener practicing Speaker-Listener Technique (SLT), "
+                f"paraphrase what you heard from the speaker in a clear, empathetic way. "
+                f"Focus on reflecting both content and emotion without adding new information "
+                f"or your own opinions. Speaker's text: '{text}'"
+                f"Current detected emotion: {self.current_emotion}"
+            )
             response = self.model.generate_content(prompt)
-            return response.text
+            return f"Let me reflect what I heard: {response.text}"
         except Exception:
-            return f"Let me make sure I understood: {text}"
+            return None
 
 
     def generate_response(self, user_input):
@@ -189,7 +197,7 @@ class ConversationBot:
             f"Current task: {self.current_task}\n"
             f"Bot's character: {json.dumps(self.character, indent=2)}\n"
             f"User's current emotion: {self.current_emotion}\n"
-            f"Provide a concise response of around 20 words or fewer, unless additional detail is necessary to fully address the user's request."
+            f"Provide a concise response of around 25 words or fewer, unless additional detail is necessary to fully address the user's request."
             f" Responses should be brief, friendly, and to the point."
         )
         
@@ -205,10 +213,10 @@ class ConversationBot:
         if not response:
             response = "I'm here, but I didn't catch that. Could you try again?"
 
-        # Limit response to 20 words
+        # Limit response to 25 words
         words = response.split()
-        if len(words) > 20 and not self.is_detailed_response_needed(user_input):
-            response = ' '.join(words[:20]) + "..."
+        if len(words) > 25 and not self.is_detailed_response_needed(user_input):
+            response = ' '.join(words[:25])
 
         return response
 
@@ -264,17 +272,15 @@ class ConversationBot:
         return response.text.strip().lower()
 
     def main_loop(self):
-        self.speak_text("Welcome to the Advanced Interactive Conversation Bot!")
+        self.speak_text("Welcome to the Charisma Conversation Bot!")
         print("Speak to start the conversation. Say 'goodbye' to end.")
-
         self.speak_text(self.switch_role())
-
+        
         while True:
             user_input = self.listen_for_speech()
-            
             if user_input is None:
                 continue
-            
+                
             if user_input.lower() == 'goodbye':
                 self.speak_text("It was nice talking to you.")
                 summary = self.summarize_conversation()
@@ -282,52 +288,28 @@ class ConversationBot:
                 self.speak_text("Goodbye!")
                 self.save_conversation()
                 break
-            
 
-                        # Paraphrase and confirm understanding
+            # Always paraphrase in listener role
             if self.speaker_listener_role == "listener":
-                paraphrase = self.paraphrase(user_input)
-                self.speak_text(paraphrase)
-                self.speak_text("Did I understand correctly?")
-
-            self.conversation_history.append({"user": user_input})
-
-            response = self.generate_response(user_input)
-
-            # Clear the stop_speaking_event flag before speaking
-            self.stop_speaking_event.clear()
-
-            # Start speaking and monitor for interruptions
-            self.speak_text(response)
-            
-            self.conversation_history.append({"ai": response})
-
-            # Check if character should be updated every 5 exchanges
-            if len(self.conversation_history) % 5 == 0:
-                self.update_character()
-            
-            # Handle summaries if requested
-            if "summarize" in user_input.lower() or "recap" in user_input.lower():
-                summary = self.summarize_conversation()
-                self.speak_text(f"Here's a summary of our conversation: {summary}")
-
-            # Reset misunderstanding count after successful exchange
-            self.misunderstanding_count = 0 
-
-            # Random affirmation
-            if random.choice([True, False]):
-                self.speak_text(random.choice(self.personalities[self.character_type]['affirmations']))
-            
-            # Switch roles and use appropriate phrase
-            self.speak_text(self.switch_role())
-            
-            # Save to conversation history
-            self.conversation_history.append({
-                "timestamp": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
-                "speaker": "user",
-                "message": user_input,
-                "response": response
-            }) 
+                try:
+                    paraphrase = self.paraphrase(user_input)
+                    self.speak_text(f"Let me reflect what I heard: {paraphrase}")
+                    self.speak_text("Did I capture that correctly?")
+                except Exception as e:
+                    print(f"Error in paraphrasing: {e}")
+                    continue
+                    
+                # Append to conversation history
+                self.conversation_history.append({
+                    "timestamp": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+                    "speaker": "user",
+                    "message": user_input,
+                    "response": paraphrase
+                })
+                
+            # Only switch roles occasionally when appropriate    
+            if not user_input.endswith('?') and random.random() < 0.3:
+                self.speak_text(self.switch_role()) 
 
     def save_conversation(self):
         df = pd.DataFrame(self.conversation_history)

@@ -1,13 +1,14 @@
 from dotenv import load_dotenv
 from conversation_bot.conversation_bot import ConversationBot
 from speech.speech_detector import SpeechDetector
+from vosk import Model
 
 def main():
     load_dotenv()  # Load environment variables
     
     # Vosk model paths
-    vosk_model_path = "../data/vosk_model/vosk_model_en_us_0.42_gigaspeech"
-    spk_model_path = "../data/vosk_model/vosk_model_spk_0.4"
+    vosk_model_path = r"C:\Users\imshr\OneDrive - Oregon State University\Desktop\ConvoBotFolder\vosk-model-en-us-0.42-gigaspeech"
+    spk_model_path = r"C:\Users\imshr\OneDrive - Oregon State University\Desktop\ConvoBotFolder\vosk-model-spk-0.4"
     
     # Initialize Speech Detector and the Conversation Bot
     detector = SpeechDetector(vosk_model_path, spk_model_path)
