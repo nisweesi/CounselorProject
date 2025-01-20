@@ -13,7 +13,7 @@ import numpy as np
 import json
 
 # Configure Gemini API
-genai.configure(api_key='AIzaSyB6xGpFdylTilpEJJOugCSrZvU26PfiMko')
+genai.configure(api_key='XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX')
 model = genai.GenerativeModel('gemini-pro')
 
 recognizer = sr.Recognizer()
