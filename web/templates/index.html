@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>AI Chatbot</title>
+  
+  <!-- Link to external CSS -->
+  <link rel="stylesheet" href="../static/style.css" />
+
+  <!-- AudioMotion for visualizing microphone input -->
+  <script src="https://cdn.jsdelivr.net/npm/audiomotion-analyzer"></script>
+</head>
+<body>
+  <div class="chat-container">
+    <!-- Chat Header -->
+    <div class="chat-header">
+      <h2>AI Chatbot</h2>
+    </div>
+
+    <!-- Sound Visualizer Container -->
+    <div id="container"></div>
+    <audio id="audio"></audio>
+
+    <!-- Chat Messages -->
+    <div id="chatBox" class="chat-box"></div>
+
+    <!-- Input Area -->
+    <div class="input-container">
+      <input type="text" id="userInput" placeholder="Type a message..." autocomplete="off" />
+      <button id="sendButton">Send</button>
+      <button id="micButton">🎤</button>
+    </div>
+  </div>
+
+  <!-- Attach your main script (defer recommended so the DOM is ready) -->
+  <script defer src="../static/script.js"></script>
+</body>
+</html>
