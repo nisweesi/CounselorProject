@@ -15,7 +15,7 @@ def speech_model(text):
     tts = TTS(model_name="tts_models/en/vctk/vits").to("cpu")
 
     # Generate audio
-    audio_output = tts.tts(text, speed=1, speaker = 'p341')
+    audio_output = tts.tts(text, speed=1, speaker = 'p228')
     
     logging.info("Speech generation completed successfully.")
 
