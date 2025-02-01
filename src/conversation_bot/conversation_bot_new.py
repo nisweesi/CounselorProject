@@ -11,7 +11,7 @@ from datetime import datetime
 import pandas as pd
 
 # Configure Gemini API
-# genai.configure(api_key='XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX')
+# genai.configure(api_key='AIzaSyB6xGpFdylTilpEJJOugCSrZvU26PfiMko')
 # model = genai.GenerativeModel('gemini-pro')
 
 class ConversationBot:
@@ -23,7 +23,7 @@ class ConversationBot:
         self.conversation_history = []
         
         # Configure Gemini API
-        genai.configure(api_key='xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx')
+        genai.configure(api_key='AIzaSyB6xGpFdylTilpEJJOugCSrZvU26PfiMko')
         self.model = genai.GenerativeModel('gemini-pro')
         
         # Initialize speech recognition and TTS
@@ -54,8 +54,8 @@ class ConversationBot:
     def listener_mode(self):
         try:
             # Welcome Message
-            self.speak_text("Hello! I am Charisma Bot. You have the floor; I am listening.")
-            
+            self.speak_text("Hello! I am Charisma Bot. You have the floor; I am listening. Can you please share your experience?")
+
             while True:
                 # Listen for Speaker Input
                 user_input = self.listen_for_speech()
@@ -126,7 +126,7 @@ class ConversationBot:
 
     def speaker_mode(self):
         try:
-            self.speak_text("Hello! I am Charisma Bot. I will talk first, and you will listen.")
+            self.speak_text("Hello! I am Charisma Bot. I will talk first, and you will listen. Please paraphrase what I have said!")
             while True:
                 # Generate and store current statement
                 current_statement = self.generate_topic()
