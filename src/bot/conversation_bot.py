@@ -21,7 +21,7 @@ class ConversationBot:
 
     def listener_mode(self):
         try:
-            speak_text("Hello! I am Charisma Bot. You have the floor; I am listening.")
+            speak_text("Hello! I am Charisma Bot. Can you please share your experience of this Human Robot Interaction Retreat? You have the floor; I am listening.")
             while True:
                 user_input = listen_for_speech()
                 if user_input is None:
@@ -65,7 +65,7 @@ class ConversationBot:
 
     def speaker_mode(self):
         try:
-            speak_text("Hello! I am Charisma Bot. I will talk first, and you will listen.")
+            speak_text("Hello! I am Charisma Bot. I will talk first, and you will listen. You may share your experience of this Human Robot Meditation Retreat")
             while True:
                 current_statement = generate_topic(self.character_type)
                 speak_text(current_statement)
