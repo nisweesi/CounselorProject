@@ -1,22 +1,52 @@
+import os
+from openai import OpenAI
+from dotenv import load_dotenv
 import google.generativeai as genai
 
+load_dotenv()  # Load API keys from .env file
+
 class LLMApi:
-    def __init__(self):
-        # Configure Gemini API
-        genai.configure(api_key='AIzaSyB6xGpFdylTilpEJJOugCSrZvU26PfiMko')
-        self.model = genai.GenerativeModel('gemini-pro')
+    def __init__(self, provider="openai"):
+        """Initialize the API client based on the selected provider"""
+        self.provider = provider.lower()
+        self.api_key = self.get_api_key()
+        self.client = self.get_client()
 
-    def generate_content(self, prompt):
-        response = self.model.generate_content(prompt)
-        return response.text
+    def get_api_key(self):
+        """Retrieve API keys based on the selected provider"""
+        keys = {
+            "openai": os.getenv("CHATGPT_API"),
+            "deepseek": os.getenv("DEEPSEEKAPI"),
+            "grok": os.getenv("GROK_API"),
+            "gemini": os.getenv("GEMINI_API")
+        }
+        return keys.get(self.provider)
 
-    def check_similarity(self, original, paraphrase):
-        similarity_prompt = f"""
-        Compare these statements and rate their similarity on a scale of 0 to 10:
-        Original: {original}
-        Paraphrase: {paraphrase}
-        Consider partial matches and key concepts.
-        Only respond with a number between 0 and 10.
-        """
-        similarity_check = self.generate_content(similarity_prompt)
-        return float(similarity_check.strip())
+    def get_client(self):
+        """Return the corresponding API client"""
+        if self.provider == "openai":
+            return OpenAI(api_key=self.api_key)
+        elif self.provider == "deepseek":
+            return OpenAI(api_key=self.api_key, base_url="https://api.deepseek.com/v1")
+        elif self.provider == "grok":
+            return OpenAI(api_key=self.api_key, base_url="https://api.x.ai/v1")
+        elif self.provider == "gemini":
+            genai.configure(api_key=self.api_key)
+            return genai
+        else:
+            raise ValueError("Invalid provider specified")
+
+    def generate_response(self, messages, model="gpt-4o-latest", temperature=0.8, max_tokens=100):
+        """Generate a response using the selected LLM"""
+        try:
+            if self.provider == "gemini":
+                response = self.client.generate_text(model="gemini-pro", prompt=messages[-1]["content"])
+                return response.result if response else None
+            else:
+                response = self.client.chat.completions.create(
+                    model=model, messages=messages, temperature=temperature, max_tokens=max_tokens
+                )
+                return response.choices[0].message.content if response.choices else None
+        except Exception as e:
+            print(f"Error communicating with {self.provider.upper()}: {e}")
+            return None

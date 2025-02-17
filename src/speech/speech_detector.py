@@ -1,47 +1,68 @@
 import pyaudio
 import json
-import numpy as np
-from vosk import Model, KaldiRecognizer, SpkModel
-from sklearn.cluster import DBSCAN
+from vosk import Model, KaldiRecognizer
 
 class SpeechDetector:
-    def __init__(self, vosk_model_path, spk_model_path, rate=16000, buffer_size=8192):
+    def __init__(self, vosk_model_path, rate=16000, buffer_size=8192):
+        """Initialize the speech detector with Vosk ASR Model"""
         self.model = Model(vosk_model_path)
-        self.spk_model = SpkModel(spk_model_path)
-        self.recognizer = KaldiRecognizer(self.model, rate, self.spk_model)
+        self.recognizer = KaldiRecognizer(self.model, rate)
         self.rate = rate
         self.buffer_size = buffer_size
         self.mic = pyaudio.PyAudio()
         self.stream = None
-        self.embeddings = []
 
-    def start_stream(self):
-        self.stream = self.mic.open(format=pyaudio.paInt16, channels=1, rate=self.rate,
-                                    input=True, frames_per_buffer=self.buffer_size)
-        self.stream.start_stream()
+    def start_stream(self, device_index=1):
+        """Start the microphone stream"""
+        if self.stream is not None:
+            return
+        try:
+            self.stream = self.mic.open(format=pyaudio.paInt16,
+                                        channels=1,
+                                        rate=self.rate,
+                                        input=True,
+                                        input_device_index=device_index,
+                                        frames_per_buffer=self.buffer_size)
+            print(f"Using input device {device_index}: {self.mic.get_device_info_by_index(device_index)['name']}")
+        except OSError as e:
+            print(f"Error initializing audio stream: {e}")
 
     def stop_stream(self):
-        if self.stream.is_active():
-            self.stream.stop_stream()
-        self.stream.close()
-        self.mic.terminate()
+        """Stop and close the microphone stream"""
+        if self.stream:
+            if self.stream.is_active():
+                self.stream.stop_stream()
+            self.stream.close()
+            self.stream = None
+        if self.mic:
+            self.mic.terminate()
 
     def detect_speech(self):
+        """Recognizes speech and converts it to text"""
         try:
             self.start_stream()
+            print("Listening...")
             while True:
-                data = self.stream.read(self.buffer_size, exception_on_overflow=False)
+                try:
+                    data = self.stream.read(self.buffer_size, exception_on_overflow=False)
+                except IOError as e:
+                    print(f"Stream read error: {e}")
+                    continue 
+
                 if self.recognizer.AcceptWaveform(data):
                     result = json.loads(self.recognizer.Result())
-                    if 'spk' in result:
-                        embedding = np.array(result['spk'])
-                        self.embeddings.append(embedding)
-                        print(f"Captured Text: {result.get('text', '')}")
+                    text = result.get("text", "").strip()
+                    if text:
+                        return text
         except KeyboardInterrupt:
-            print("Stopping detection.")
+            print("\nStopping detection.")
         finally:
             self.stop_stream()
 
-    def analyze_speakers(self):
-        clustering = DBSCAN(eps=0.5, min_samples=1).fit(self.embeddings)
-        return len(set(clustering.labels_))
+if __name__ == "__main__":
+    vosk_model_path = "data/vosk_model"
+    speech_detector = SpeechDetector(vosk_model_path)
+    while True:
+        recognized_text = speech_detector.detect_speech()
+        if recognized_text:
+            print(f"Recognized: {recognized_text}")
