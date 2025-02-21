@@ -14,14 +14,9 @@ def signal_handler(sig, frame):
 signal.signal(signal.SIGINT, signal_handler)  # Capture Ctrl + C
 
 if __name__ == "__main__":
-<<<<<<< Updated upstream
     try:
         bot.main_loop()
     except KeyboardInterrupt:
         print("\n[INFO] Keyboard Interrupt detected. Saving conversation...")
         bot.save_conversation()
         sys.exit(0)
-=======
-    bot = ConversationBot()
-    bot.main_loop()
->>>>>>> Stashed changes
