@@ -20,19 +20,21 @@ def generate_response(user_input, character_type):
     6. Aligns with a {personality_tone[character_type]} personality
     7. Adds a relevant comment to continue the conversation
     8. Never uses question marks or interrogative forms
+    9. Does NOT contain empty or nonsensical content
     Do not include any meta-text or explanations. Only provide the response statement itself.
     """
 
     try:
         response = llm_api.generate_response([{"role": "user", "content": prompt}])
-        if response:
+
+        if response and len(response.split()) > 2:  # Ensure valid response
             return response.strip()
         else:
-            # Fallback response if content is flagged or empty
-            return "I understand your message. Let's continue our conversation in a constructive way."
+            return "I acknowledge your message. Let's continue discussing."
+
     except Exception as e:
         print(f"Error generating response: {str(e)}")
-        return "I appreciate your input. Let's maintain a respectful dialogue."
+        return "I appreciate your input. Let's continue positively."
 
 def paraphrase(text):
     """Paraphrase user input while maintaining meaning."""
@@ -55,7 +57,7 @@ def generate_topic(character_type):
 
     prompt = f"""
     Generate a single meaningful statement (NOT a question) that is:
-    1. Within 25 words
+    1. Within 20 words
     2. Clear and simple thought-provoking
     3. Easy to understand and No complex vocabulary
     4. Natural and conversational

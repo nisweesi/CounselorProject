@@ -12,6 +12,7 @@ from speech.speech_model import speech_model
 from llm.llm_api import LLMApi
 import google.generativeai as genai
 from config import CONVERSATION_DIR, LLM_CONFIG
+import traceback
 
 
 class ConversationBot:
@@ -20,6 +21,7 @@ class ConversationBot:
         if llm_provider not in LLM_CONFIG:
             raise ValueError(f"Invalid LLM provider: {llm_provider}")
         self.llm_provider = llm_provider
+        self.llm_api = LLMApi(provider=self.llm_provider)
         self.conversation_history = []
         self.session_filename = os.path.join(CONVERSATION_DIR, f"conversation_session_{datetime.now().strftime('%Y%m%d_%H%M%S')}.json")
         self.character = select_character()
@@ -139,7 +141,7 @@ class ConversationBot:
                 else:
                     speak_text("That's not quite what I said. Let me repeat:")
                     speak_text(current_statement)
-                    break
+                    continue
 
                 if self.turn_count >= 3:  # Switch roles after 3 turns
                     self.switch_roles()
@@ -153,9 +155,11 @@ class ConversationBot:
         return True
 
     def switch_roles(self):
-        """Switch roles after structured conversation turns."""
-        self.save_conversation()  # Save before switching
+        """Switch roles after structured conversation turns with additional safeguards."""
+        self.save_conversation()
+        previous_role = self.speaker_listener_role
         self.speaker_listener_role = "speaker" if self.speaker_listener_role == "listener" else "listener"
+        print(f"Switching roles from {previous_role} to {self.speaker_listener_role}.")
         speak_text(f"Let's switch roles. I will now be the {self.speaker_listener_role}.")
         self.turn_count = 0
 
@@ -172,10 +176,14 @@ class ConversationBot:
             self.save_conversation()
 
     def is_confirmation(self, text):
-        """Check if the user confirms an answer safely."""
+        """Check if the user confirms an answer safely with expanded detection."""
+        confirmation_phrases = ["yes", "correct", "right", "that is correct", "yes that is correct", "affirmative", "indeed"]
+        
         if not text:
             return False
-        return text.lower() in ['yes', 'correct', 'right', 'that is correct', 'yes that is correct']
+
+        text_lower = text.lower()
+        return any(text_lower.startswith(phrase) or text_lower == phrase for phrase in confirmation_phrases)
 
     def is_goodbye(self, text):
         """Check if the user wants to end the conversation."""
@@ -192,13 +200,19 @@ class ConversationBot:
         return random.choice(prompts)
 
     def save_conversation(self):
-        """Save conversation history to a single session file."""
+        """Save conversation history with full details including bot character, emotions, and structured context."""
         if not self.conversation_history:
             return
 
+        conversation_data = {
+            "session_timestamp": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+            "bot_character": self.character_type,  # Save bot personality type
+            "history": self.conversation_history
+        }
+
         try:
             with open(self.session_filename, "w", encoding="utf-8") as f:
-                json.dump(self.conversation_history, f, indent=4)
+                json.dump(conversation_data, f, indent=4)
         except Exception as e:
             print(f"Error saving conversation: {e}")
 

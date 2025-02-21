@@ -7,8 +7,6 @@ from config import LLM_CONFIG
 
 load_dotenv()  # Load API keys from .env file
 
-load_dotenv()  # Load API keys from .env file
-
 class LLMApi:
     def __init__(self, provider="gemini"):
         """Initialize the API client based on the selected provider"""
