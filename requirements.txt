@@ -1,26 +1,26 @@
 # Core Python Dependencies
-python-dotenv==1.0.0      # Environment variable management
-pandas==2.1.1             # Data handling and conversation logging
+python-dotenv      # Environment variable management
+pandas            # Data handling and conversation logging
 
 # Flask (for API-based interaction)
-Flask==3.0.0
+Flask
 
 # LLM API Integration
-openai==1.2.0             # OpenAI API (ChatGPT)
-google-generativeai==0.3.2  # Google Gemini AI API
-httpx==0.26.0             # Required for OpenAI API
+openai           # OpenAI API (ChatGPT)
+google-generativeai  # Google Gemini AI API
+httpx            # Required for OpenAI API
 
 # Speech Recognition & Synthesis
-vosk==0.3.45              # Offline speech recognition
-speechrecognition==3.10.0 # Google Speech-to-Text
-pyaudio==0.2.13           # Audio input/output
-sounddevice==0.4.6        # Real-time audio playback
-pyttsx3==2.90             # Offline text-to-speech
-TTS==0.13.0               # Coqui-AI VITS-based TTS
+vosk              # Offline speech recognition
+speechrecognition # Google Speech-to-Text
+pyaudio        # Audio input/output
+sounddevice        # Real-time audio playback
+pyttsx3             # Offline text-to-speech
+TTS               # Coqui-AI VITS-based TTS
 
 # Testing & Debugging
-pytest==7.4.2             # Unit testing
-coverage==7.2.0           # Test coverage reports
+pytest             # Unit testing
+coverage           # Test coverage reports
 
 # Miscellaneous Utilities
-numpy==1.24.3             # Used for speech synthesis
+numpy             # Used for speech synthesis

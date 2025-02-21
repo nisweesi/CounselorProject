@@ -1,29 +1,35 @@
-from TTS.api import TTS
-import sounddevice as sd
-import numpy as np
-import logging
+import os
+import torch
+from transformers import VitsTokenizer, VitsModel, set_seed
+from config import VITS_DIR, DEFAULT_VITS_MODEL
 
-# Logging setup
-logging.basicConfig(filename="tts_logs.txt",
-                    filemode="a",
-                    level=logging.INFO, 
-                    format="%(asctime)s - %(levelname)s - %(message)s")
+class SpeechModel:
+    def __init__(self, model_name=DEFAULT_VITS_MODEL):
+        """Initialize the VITS model, downloading if necessary."""
+        self.model_name = model_name
+        self.model_path = os.path.join(VITS_DIR, model_name.replace("/", "_"))  # Store model in VITS_DIR
+        
+        # Download and load the model if not already available
+        self.tokenizer = VitsTokenizer.from_pretrained(model_name)
+        self.model = VitsModel.from_pretrained(model_name)
 
-def speech_model(text):
-    """Generate speech from text using VITS model"""
-    
-    # Load VITS model
-    tts = TTS(model_name="tts_models/en/vctk/vits").to("cpu")
+        print(f"VITS Model loaded successfully: {model_name}")
 
-    # Generate audio
-    audio_output = tts.tts(text, speed=1, speaker='p228')
-    
-    logging.info("Speech generation completed successfully.")
+    def text_to_speech(self, text, output_path="output.wav"):
+        """Convert text to speech and save as a .wav file."""
+        inputs = self.tokenizer(text=text, return_tensors="pt")
 
-    # Play audio in real-time
-    response_spoken = sd.play(np.array(audio_output), samplerate=22050)
-    sd.wait()
-    return response_spoken
+        set_seed(555)  # Ensure deterministic output
+        with torch.no_grad():
+            outputs = self.model(**inputs)
 
-if __name__ == "__main__":
-    speech_model("You are doing great! Keep going.")
+        waveform = outputs.waveform[0].numpy()
+
+        # Save as .wav
+        from scipy.io.wavfile import write
+        write(output_path, rate=self.model.config.sampling_rate, data=waveform)
+
+        print(f"Speech saved at {output_path}")
+
+# Instantiate the model once at import time
+speech_model = SpeechModel()

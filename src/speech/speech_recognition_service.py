@@ -1,35 +1,29 @@
 import speech_recognition as sr
-import time
-from datetime import timedelta
+from speech.speech_detector import SpeechDetector
+from config import VOSK_MODEL_PATH, VOSK_SPEAKER_MODEL_PATH
 
 recognizer = sr.Recognizer()
-
-def format_timestamp(seconds):
-    """Convert seconds to SRT timestamp format (HH:MM:SS,MS)"""
-    td = timedelta(seconds=seconds)
-    hours, remainder = divmod(td.seconds, 3600)
-    minutes, seconds = divmod(remainder, 60)
-    return f"{hours:02d}:{minutes:02d}:{seconds:02d},{td.microseconds//1000:03d}"
+speech_detector = SpeechDetector(vosk_model_path=VOSK_MODEL_PATH)
 
 def listen_for_speech():
-    """Capture speech input and return transcribed text"""
-    with sr.Microphone() as source:
-        recognizer.adjust_for_ambient_noise(source, duration=1)
+    """Capture speech input with VOSK as primary and Google Speech as fallback."""
+    print("Listening for speech...")
 
-        while True:
-            try:
-                print("Listening...")
-                audio = recognizer.listen(source, timeout=10, phrase_time_limit=None)
-                text = recognizer.recognize_google(audio)
-                if text:
-                    return text
-            except sr.UnknownValueError:
-                continue
-            except sr.RequestError:
-                print("Sorry, there was an error with the speech recognition service.")
-            except sr.WaitTimeoutError:
-                print("No speech detected for more than 10 seconds")
-    return None
+    # Try VOSK first
+    recognized_text = speech_detector.detect_speech()
+    if recognized_text:
+        print(f"VOSK detected speech: {recognized_text}")
+        return recognized_text
 
-if __name__ == "__main__":
-    listen_for_speech()
+    # Fallback to Google Speech Recognition
+    try:
+        with sr.Microphone() as source:
+            print("Switching to Google Speech Recognition...")
+            recognizer.adjust_for_ambient_noise(source, duration=1)  # Reduce background noise
+            audio = recognizer.listen(source, timeout=30, phrase_time_limit=30)
+            text = recognizer.recognize_google(audio)
+            print(f"Google detected speech: {text}")
+            return text
+    except Exception as e:
+        print(f"Speech recognition error: {e}")
+        return None

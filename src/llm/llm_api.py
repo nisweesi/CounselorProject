@@ -1,14 +1,29 @@
 import os
+<<<<<<< Updated upstream
+import sys
+=======
+>>>>>>> Stashed changes
 from openai import OpenAI
 from dotenv import load_dotenv
 import google.generativeai as genai
+from config import LLM_CONFIG
+
+load_dotenv()  # Load API keys from .env file
 
 load_dotenv()  # Load API keys from .env file
 
 class LLMApi:
+<<<<<<< Updated upstream
+    def __init__(self, provider="gemini"):
+        """Initialize the API client based on the selected provider"""
+        if provider not in LLM_CONFIG:
+            raise ValueError(f"Invalid LLM provider: {provider}")
+        self.provider = provider
+=======
     def __init__(self, provider="openai"):
         """Initialize the API client based on the selected provider"""
         self.provider = provider.lower()
+>>>>>>> Stashed changes
         self.api_key = self.get_api_key()
         self.client = self.get_client()
 
@@ -36,6 +51,28 @@ class LLMApi:
         else:
             raise ValueError("Invalid provider specified")
 
+<<<<<<< Updated upstream
+    def generate_response(self, messages, temperature=0.8, max_tokens=100):
+        """Generate a response using the selected LLM with improved Gemini integration."""
+        try:
+            model_name = LLM_CONFIG[self.provider]["model"]  # Load dynamically from config
+
+            if self.provider == "gemini":
+                # Initialize the Gemini Model Correctly
+                model = self.client.GenerativeModel(model_name)
+                response = model.generate_content(messages[-1]["content"])  # Correct API usage
+                return response.text if response else "Sorry, I didn't understand that."
+
+            else:
+                response = self.client.chat.completions.create(
+                    model=model_name, messages=messages, temperature=temperature, max_tokens=max_tokens
+                )
+                return response.choices[0].message.content if response.choices else None
+
+        except Exception as e:
+            print(f"Error communicating with {self.provider.upper()}: {e}")
+            return "Sorry, I'm having trouble processing that request."
+=======
     def generate_response(self, messages, model="gpt-4o-latest", temperature=0.8, max_tokens=100):
         """Generate a response using the selected LLM"""
         try:
@@ -50,3 +87,4 @@ class LLMApi:
         except Exception as e:
             print(f"Error communicating with {self.provider.upper()}: {e}")
             return None
+>>>>>>> Stashed changes
