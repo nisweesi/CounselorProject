@@ -10,8 +10,8 @@
 Our main project structure is the following (MVC-style structure):
 
 CounselorProject/
-├── app/
-│   ├── __init__.py
+├── app/ \n
+│   ├── __init__.py \n
 │   ├── config.py
 │   ├── models.py
 │   ├── routes.py
