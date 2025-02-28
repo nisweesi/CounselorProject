@@ -11,8 +11,8 @@ Our main project structure is the following (MVC-style structure):
 
 ```
 CounselorProject/
-├── app/ \n
-│   ├── __init__.py \n
+├── app/
+│   ├── __init__.py
 │   ├── config.py
 │   ├── models.py
 │   ├── routes.py
