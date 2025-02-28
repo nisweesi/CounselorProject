@@ -9,6 +9,7 @@
 
 Our main project structure is the following (MVC-style structure):
 
+```
 CounselorProject/
 ├── app/ \n
 │   ├── __init__.py \n
@@ -45,6 +46,7 @@ CounselorProject/
 ├── .gitignore
 ├── README.md
 └── CHANGELOG.md
+```
 
 # 3. How to build the software
 
