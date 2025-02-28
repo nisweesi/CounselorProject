@@ -1,7 +1,4 @@
 .env
 data/
-src/__pycache__
-src/llm/__pycache__
-src/bot/__pycache__
-src/speech/__pycache__
 data/models
+__pycache__/
