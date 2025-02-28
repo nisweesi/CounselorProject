@@ -62,20 +62,3 @@ Work in progress
 ## Summarization
 
 Work in progress
-
-
-
-# 3. How to build the software
-
-### Install dependencies
-`pip install -r requirements.txt`
-### Running the backend
-`python src/main.py`
-
-# 4. How to test the software
-
-Work in progress
-
-## Summarization
-
-Work in progress
