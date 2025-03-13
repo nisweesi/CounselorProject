@@ -119,12 +119,17 @@ class ConversationBot:
                     self.save_conversation()
                     return False
 
-                # Use LLM to analyze the similarity score
-                prompt = f"Evaluate how similar the following response is to the given statement:\nStatement: {current_statement}\nResponse: {user_response}\nScore between 0-10."
-                similarity_response = self.llm_api.generate_response([{"role": "user", "content": prompt}])
-
+                # Validate paraphrase using a similarity prompt
+                similarity_prompt = f"""
+                Compare these statements and rate their similarity on a scale of 0 to 10:
+                Original: {current_statement}
+                Paraphrase: {user_response}
+                Consider partial matches and key concepts.
+                Only respond with a number between 0 and 10.
+                """
+                similarity_check = self.llm_api.generate_response([{"role": "user", "content": similarity_prompt}])
                 try:
-                    similarity_score = int(similarity_response.split()[0]) if similarity_response else 0
+                    similarity_score = float(similarity_check.strip())
                 except ValueError:
                     similarity_score = 0
 
@@ -139,9 +144,8 @@ class ConversationBot:
                     })
                     self.turn_count += 1  # Increment turn count after successful interaction
                 else:
-                    speak_text("That's not quite what I said. Let me repeat:")
-                    speak_text(current_statement)
-                    continue
+                    speak_text("That's not quite what I said. Please try to paraphrase again.")
+                    continue  # Re-prompt without breaking the loop
 
                 if self.turn_count >= 3:  # Switch roles after 3 turns
                     self.switch_roles()

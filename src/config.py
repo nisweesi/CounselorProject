@@ -27,8 +27,8 @@ os.makedirs(OUTPUT_AUDIO_DIR, exist_ok=True)
 os.makedirs(CONVERSATION_DIR, exist_ok=True) 
 
 # VOSK Model Setup
-VOSK_MODEL_URL = "https://alphacephei.com/vosk/models/vosk-model-en-us-0.22-lgraph.zip"
-VOSK_MODEL_PATH = os.path.join(VOSK_DIR, "vosk-model-en-us-0.22-lgraph")
+VOSK_MODEL_URL = "https://alphacephei.com/vosk/models/vosk-model-en-us-0.22.zip"
+VOSK_MODEL_PATH = os.path.join(VOSK_DIR, "vosk-model-en-us-0.22")
 
 # VOSK Speaker Model
 VOSK_SPEAKER_MODEL_URL = "https://alphacephei.com/vosk/models/vosk-model-spk-0.4.zip"
@@ -53,6 +53,11 @@ download_and_extract(VOSK_SPEAKER_MODEL_URL, VOSK_SPEAKER_MODEL_PATH)
 # VITS Model
 DEFAULT_VITS_MODEL = "facebook/mms-tts-eng"
 
+VITS_VOICES = {
+    "male": "male_speaker_id",  # Replace with actual speaker ID
+    "female": "p228"  # Replace with actual speaker ID
+}
+
 # **LLM Configuration**
 LLM_CONFIG = {
     "openai": {
@@ -64,7 +69,7 @@ LLM_CONFIG = {
         "api_key": os.getenv("DEEPSEEK_API_KEY"),
     },
     "gemini": {
-        "model": "gemini-pro",
+        "model": "gemini-2.0-flash",
         "api_key": os.getenv("GEMINI_API_KEY"),
     },
     "grok": {

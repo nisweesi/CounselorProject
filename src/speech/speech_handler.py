@@ -1,9 +1,11 @@
 import speech_recognition as sr
 import pyttsx3
+import time
 
 recognizer = sr.Recognizer()
 engine = pyttsx3.init()
 engine.setProperty('rate', 160)
+engine.setProperty('volume', 0.9)  # Soften the voice for a soothing tone
 
 def listen_for_speech():
     """Capture speech input using Google Speech Recognition"""
@@ -22,8 +24,9 @@ def listen_for_speech():
         print(f"Could not request results; {e}")
         return None
 
-def speak_text(text):
+def speak_text(text, voice="female"):
     """Convert text to speech"""
     print(f"AI: {text}")
     engine.say(text)
     engine.runAndWait()
+    time.sleep(1)

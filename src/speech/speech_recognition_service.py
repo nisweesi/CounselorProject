@@ -20,6 +20,8 @@ def listen_for_speech():
             print("\nSwitching to Google Speech Recognition...")
             recognizer.adjust_for_ambient_noise(source, duration=1)
             audio = recognizer.listen(source, timeout=30, phrase_time_limit=30)
+            # recognizer.adjust_for_ambient_noise(source, duration=2)  # More ambient noise adaptation
+            # audio = recognizer.listen(source, timeout=60, phrase_time_limit=60)  # Allow long pauses
             text = recognizer.recognize_google(audio)
             print(f"Google detected speech: {text}")
             return text

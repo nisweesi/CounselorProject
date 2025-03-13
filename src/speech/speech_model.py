@@ -1,12 +1,13 @@
 import os
 import torch
 from transformers import VitsTokenizer, VitsModel, set_seed
-from config import VITS_DIR, DEFAULT_VITS_MODEL
+from config import VITS_DIR, DEFAULT_VITS_MODEL, VITS_VOICES
 
 class SpeechModel:
-    def __init__(self, model_name=DEFAULT_VITS_MODEL):
+    def __init__(self, model_name=DEFAULT_VITS_MODEL, speaker_id=None):
         """Initialize the VITS model, downloading if necessary."""
         self.model_name = model_name
+        self.speaker_id = speaker_id  # Add speaker selection support
         self.model_path = os.path.join(VITS_DIR, model_name.replace("/", "_"))  # Store model in VITS_DIR
         
         # Download and load the model if not already available
@@ -21,7 +22,7 @@ class SpeechModel:
 
         set_seed(555)  # Ensure deterministic output
         with torch.no_grad():
-            outputs = self.model(**inputs)
+            outputs = self.model(**inputs, speaker_id=self.speaker_id) # Pass speaker_id
 
         waveform = outputs.waveform[0].numpy()
 
