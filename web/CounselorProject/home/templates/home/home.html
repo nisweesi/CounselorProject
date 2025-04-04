@@ -1,0 +1,35 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Charisma-Counselor - an AI powered Counselor</title>
+    <link rel="stylesheet" href="{% static '/base.css' %}">
+    <link rel="stylesheet" href="{% static 'homePage/home.css' %}">
+    <script src="{% static 'homePage/home.js' %}" defer></script>
+    <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>  
+</head>
+<body>
+        <!--display header template-->
+        {% include 'partials/header.html' %}
+    <div id="page-container">
+        <main>
+            <section id="controls">
+                <div class="button-container" id="create-button-container">
+                    <button type="button" id="create-button">+</button>
+                    <h4>Start a session</h4>
+                </div>
+            </section>    
+
+            <div class="button-container" id="archive-settings-container">
+                <button type="button" id="summary-button">Profile Summary</button>
+                <button type="button" id="settings-button">Character</button>
+            </div>
+        </main>
+    </div>
+
+    <!--display footer template-->
+    {% include 'partials/footer.html' %} 
+</body>

@@ -1,0 +1,39 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset='utf-8'>
+        <meta http-equiv='X-UA-Compatible' content='IE=edge'>
+        <title>Charisma Counselor is only one click away!</title>
+        <meta name='viewport' content='width=device-width, initial-scale=1'>
+        <link rel="stylesheet" href="{% static '/base.css' %}">
+        <link rel="stylesheet" href="{% static 'recordingPage/recording.css' %}">
+        <script src="{% static 'recordingPage/index.js' %}" defer></script>
+    </head>
+    <body>
+            <!--display header template-->
+            {% include 'partials/header.html' %}
+
+        <div id="instructions-container">
+            <h2>Instructions:</h2>
+            <p>To start a recording, click the <em>Start Recording</em> button. The recording will begin immediately after you close the pop-up message. As soon as the recording starts, live transcription will automatically begin. To stop the recording, press the <em>Stop Recording</em> button. The live transcript is automatically downloaded as an <code>.txt</code> file. You can summarize the transcript using the summarization tool available from the homepage.</p>
+        </div>
+
+        <div id="transcript-container">
+            <h2>Live Transcript:</h2>
+            <p id="live-transcript"></p>
+        </div>
+
+
+        <section id="controls">
+            <div class="button-container"> 
+                <button type="button" id="start-button">Start Recording</button>
+                <button type="button" id="stop-button">Stop Recording</button>
+            </div>
+        </section>
+
+    <!--display footer template-->
+    {% include 'partials/footer.html' %} 
+
+    </body>
+</html>

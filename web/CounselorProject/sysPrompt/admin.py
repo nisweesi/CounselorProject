@@ -1,3 +1,5 @@
 from django.contrib import admin
 
-# Register your models here.
+from .models import sys_prompt
+
+admin.site.register(sys_prompt)

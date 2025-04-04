@@ -1,0 +1,107 @@
+/*************************************************
+for all home page specific css changes
+*************************************************/
+
+/* Upload Form Styling */
+.form-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin: 15px 0;
+}
+
+#uploadForm {
+    display: flex;
+    background: #2a2a2a;
+    padding: 30px;
+    border-radius: 12px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+    width: 100%;
+    max-width: 500px;
+    margin-top: 30px;
+    margin-bottom: 5px;
+}
+/* Page-level layout */
+#page-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    min-height: 100vh;
+    padding: 40px 20px;
+    background-color: #f9f9f9;
+    box-sizing: border-box;
+}
+
+#uploadForm input[type="file"] {
+    background-color: #1c1c1c;
+    color: #d1d1d1;
+    padding: 12px;
+    border-radius: 8px;
+    border: 1px solid #3a3a3a;
+    width: 100%;
+    cursor: pointer;
+    font-size: 1.1rem;
+    transition: border-color 0.3s ease-in-out, background-color 0.3s ease;
+}
+
+#uploadForm input[type="file"]::file-selector-button {
+    background: #2f2f2f;
+    color: #d1d1d1;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 8px;
+    margin-right: 15px;
+    cursor: pointer;
+    transition: background 0.3s ease-in-out, transform 0.3s ease-in-out;
+    font-weight: bold;
+    box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.3);
+}
+
+#uploadForm input[type="file"]::file-selector-button:hover {
+    background: #3a3a3a;
+    transform: scale(1.05);
+}
+
+/* Upload Button Styled Like Other Buttons */
+#uploadForm button {
+    background: #2f2f2f;
+    color: #d1d1d1;
+    border: none;
+    padding: 14px 30px;
+    margin: 10px;
+    font-size: 1rem;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease-in-out;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-weight: bold;
+    box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.3);
+}
+
+/* floating "Recording" Button */
+#create-button {
+    font-size: 2rem;
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    padding: 0;
+    background: #19c37d;
+    color: #ffffff;
+    box-shadow: 3px 3px 10px rgba(25, 195, 125, 0.3);
+    transition: all 0.3s ease-in-out;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+#create-button:hover {
+    background: #1ee696;
+    transform: scale(1.1);
+    box-shadow: 4px 4px 15px rgba(30, 230, 150, 0.3);
+}
