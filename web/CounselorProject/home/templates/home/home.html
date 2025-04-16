@@ -7,7 +7,6 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <title>Charisma-Counselor - an AI powered Counselor</title>
     <link rel="stylesheet" href="{% static '/base.css' %}">
-    <link rel="stylesheet" href="{% static 'homePage/home.css' %}">
     <script src="{% static 'homePage/home.js' %}" defer></script>
     <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>  
 </head>
@@ -17,16 +16,14 @@
     <div id="page-container">
         <main>
             <section id="controls">
+                <div class="transcript-box" id="transcript-box">
+                    <p id="transcript-text">Your therapy awaiting :) </p>
+                </div>                
                 <div class="button-container" id="create-button-container">
                     <button type="button" id="create-button">+</button>
-                    <h4>Start a session</h4>
+                    <h3>Start a session</h3>
                 </div>
-            </section>    
-
-            <div class="button-container" id="archive-settings-container">
-                <button type="button" id="summary-button">Profile Summary</button>
-                <button type="button" id="settings-button">Character</button>
-            </div>
+            </section> 
         </main>
     </div>
 

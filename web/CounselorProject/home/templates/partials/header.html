@@ -1,7 +1,11 @@
-<!-- separated into parital template because it's consistent among pages-->
+    {% load static %}
 <header>
-    <a href="/" style="text-decoration: none; color: inherit;">
-    <h1>Counselor-Project</h1>
-    <h3>An AI-powered <strong>Counselor</strong></h3>
-    </a>
-</header
+    <div class="header-wrapper">
+        <div class="logo-title-container">
+            <img src="{% static 'charisma_logo.png' %}" alt="Charisma Logo" class="logo">
+        </div>
+        <div class="text-container">
+            <h4>A Gemini & DeepSeek-powered Speaker-Listener System</h4>
+        </div>
+    </div>
+</header>
