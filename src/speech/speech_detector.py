@@ -36,10 +36,7 @@ class SpeechDetector:
                 self.stream.stop_stream()
             self.stream.close()
             self.stream = None
-        
-        if self.mic:
-            self.mic.terminate()
-
+            
     def detect_speech(self):
         try:
             self.start_stream()

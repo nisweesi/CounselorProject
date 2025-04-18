@@ -6,12 +6,10 @@ from datetime import datetime
 from django.shortcuts import render
 from django.http import JsonResponse, StreamingHttpResponse, FileResponse, HttpResponse
 from django.views.decorators.csrf import csrf_exempt
-# Get the absolute path of 'src/main/services' and add it to sys.path
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "../../../src/main/services")))
+# Get the absolute path of 'src/speech' and add it to sys.path
+# sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "../../../src/speech")))
 
-from summarization import summarize_transcript, save_summarized_transcript
-from speech_recognition_service import listen_for_speech, transcribe_audio, start_recording, stop_recording, get_flag
-# from src.main.services.speech_recognition_service import listen_for_speech, transcribe_audio
+from src.speech.speech_handler import listen_for_speech, start_recording, stop_recording, get_flag
 
 # This should be a very temporary fix
 # Global variable to control streaming
