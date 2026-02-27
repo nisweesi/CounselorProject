@@ -28,15 +28,6 @@ This software is designed for users who are familiar with our platform
 
 Follow the on screen instructions to use other features.
 
-# 4. Datasets
-
-This repo includes two deployment datasets in CSV format:
-
-- `datasets/4h_deployment.csv`
-- `datasets/meditation_retreat.csv`
-
-Columns: `timestamp, participant_id, role, speaker, message, turn_type, message_type`.
-
 
 # 4. Support & Questions
 
